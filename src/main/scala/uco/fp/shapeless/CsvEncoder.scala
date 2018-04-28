@@ -1,12 +1,12 @@
 package uco.fp.shapeless
 
-trait CsvEncoder[A] {
+trait CsvEncoder1[A] {
   def encode(value: A): List[String]
 }
 
 object Library {
 
-  implicit val employeeEncoder: CsvEncoder[Employee] =
+  implicit val employeeEncoder: CsvEncoder1[Employee] =
     e => List(e.name, e.number.toString, if (e.manager) "yes" else "no")
 
   //Another way to write the code above
@@ -19,7 +19,7 @@ object Library {
      }
    */
 
-  def writeCsv[A](values: List[A])(implicit enc: CsvEncoder[A]): String =
+  def writeCsv[A](values: List[A])(implicit enc: CsvEncoder1[A]): String =
     values.map(value => enc.encode(value).mkString(",")).mkString("\n")
 
   val employees: List[Employee] =
@@ -35,7 +35,7 @@ object Library {
   // Peter,2,no
   // Milton,3,no
 
-  implicit val iceCreamEncoder: CsvEncoder[IceCream] =
+  implicit val iceCreamEncoder: CsvEncoder1[IceCream] =
     i => List(i.name, i.numCherries.toString, if (i.inCone) "yes" else "no")
 
   //Another way to write the code above
@@ -57,10 +57,10 @@ object Library {
   val wic = writeCsv(iceCreams)
 
   implicit def pairEncoder[A, B](
-      implicit aEncoder: CsvEncoder[A],
-      bEncoder: CsvEncoder[B]
-  ): CsvEncoder[(A, B)] =
-    new CsvEncoder[(A, B)] {
+      implicit aEncoder: CsvEncoder1[A],
+      bEncoder: CsvEncoder1[B]
+  ): CsvEncoder1[(A, B)] =
+    new CsvEncoder1[(A, B)] {
       def encode(pair: (A, B)): List[String] = {
         val (a, b) = pair
         aEncoder.encode(a) ++ bEncoder.encode(b)
